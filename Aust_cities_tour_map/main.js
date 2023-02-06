@@ -154,14 +154,14 @@ map.on("click",function(event){
         let featureName = feature.get("Cityname");
         console.log("featureName: ",featureName)
         
-     //   let clickedNavElement = document.getElementById(featureName);
+      //let clickedNavElement = document.getElementById(featureName);
         let navElement = navElements.children;
         console.log("navElement: ",navElement);//navElement ine ait tum elemtnleri bu sekilde alabiliyoruz
        // mainLogic(feature,clickedNavElement);
        //1.YONTEM...
        //navElement html collection dir ve direk forEach ile veya array leri itere edebildgimz methdlari kullanarak itere edemiyoruz ondan dolayi once arraye ceviririz....
        //html collection direk, dogrudan itere edilmiyor once array e cevirmek gerekiyor
-    /*   let iconElement;
+      /*let iconElement;
        Array.from(navElement).forEach(function(element) {
             console.log("element: ",element.title)
             if(element.title === featureName)iconElement = element;
@@ -173,7 +173,6 @@ map.on("click",function(event){
         console.log("findElement: ",findNavElement);
         //Ve artik map uzerinde kullanicinin tikladigi feature ve ona karsilik gelen html a link elementini almis olduk ve fonksiyonumuzun parametresine gonderdik
         mainLogic(feature,findNavElement);//Dikkat edelim...biz pointlerimz uzerinden disardaki, butonlarimiza mudahele ediyoruz...ve tikladigmz point-city ye karsilik gelen icon-btn un class ini degistiriyoruz...ve bu sekilde hangisini tiklarsak, ona ait oloan icon button green yaparak aktif hale getirmis oluyoruz...Bu birkere cepte demekki biz bu ozelligi yapabiliyoruz...COK ONEMLI...NE YAPABILECEGMIZI BILMEK COOK ONEMLIDIR..
-      
    })
 })
 

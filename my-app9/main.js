@@ -64,6 +64,34 @@ let lineCoords = [
   [1733769.47102981, 6916479.795039535],
 ];
 
+
+/*
+[
+    [2269602.9872447476, 6740173.340662673]
+1
+: 
+(2) [2336505.881373996, 6522261.064219243]
+2
+: 
+(2) [2137708.826916475, 6331109.938135675]
+3
+: 
+(2) [1705707.311134959, 6443889.022314776]
+]
+*/
+let lineCoords2 = [
+  [2269602.9872447476, 6740173.340662673],
+  [2336505.881373996, 6522261.064219243],
+  [2137708.826916475, 6331109.938135675],
+  [1705707.311134959, 6443889.022314776],
+];
+
+const featureLine2 = new Feature({
+  geometry: new LineString(lineCoords2),
+  name: "My Line2",
+});
+
+
 let pointCoords = [1598434.680154215, 6473258.354921961];
 
 const featurePolygon = new Feature({
@@ -83,6 +111,13 @@ const featurePoint = new Feature({
 
 let features = [featurePoint, featureLine, featurePolygon];
 source.addFeatures([...features]);
+
+//1-Sonradan herhangi bir feature e eklemenenin yollarindan biri bu
+//source.addFeature(featureLine2);
+
+//2. Sonradan bir feature eklemenin baska bir yolu da budur
+source.addFeatures([featureLine2]);
+
 
 
 
