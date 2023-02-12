@@ -120,8 +120,6 @@ source.addFeatures([featureLine2]);
 
 
 
-
-
 let polygonInteraction;
 let lineInteraction;
 let pointInteraction;
@@ -259,8 +257,6 @@ document.getElementById("select").addEventListener("click",function(event){
       map.removeInteraction(polygonInteraction);
      // map.removeInteraction(modifyInteraction);
       
-
-
   let style=new Style({
     fill:new Fill({//polygon
       color:[255,255,0,0.5],
@@ -289,8 +285,6 @@ document.getElementById("select").addEventListener("click",function(event){
   })
 })
 //Sadedce direk Selection i bos olarak bile tanimlarsak selection biz herhangi bir
-
-
 
 /*
 
