@@ -200,10 +200,14 @@ document.getElementById("point").addEventListener("click",function(){
    }) 
   
   
-   map.addInteraction(pointInteraction);
-   pointInteraction.on("drawend",function(event){
-    console.log("PointCoord: ",event.feature.getGeometry().getCoordinates())
-   })
+  map.addInteraction(pointInteraction);
+
+  function pointInteractionCallback(event)
+  {  
+    console.log("PointCoorddd: ",event.feature.getGeometry().getCoordinates())
+  }
+  
+   pointInteraction.on("drawend",pointInteractionCallback);
 })
 
 document.getElementById("line").addEventListener("click",function(){

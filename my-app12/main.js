@@ -3,6 +3,46 @@
 // import TileLayer from 'ol/layer/Tile';
 // import OSM from 'ol/source/OSM';
 
+// import XYZ from 'ol/source/XYZ';
+
+// const googleMapsSource = new XYZ({
+//   url: 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+//   tileSize: [256, 256],
+//   maxZoom: 20,
+//   attributions: [
+//     '<a href="https://www.google.com/maps">Google Maps</a>',
+//     '<a href="https://www.google.com/intl/en-US_US/help/terms_maps/">Terms of Use</a>'
+//   ],
+//   crossOrigin: 'anonymous',
+//   apiKey: 'YOUR_API_KEY_HERE'
+// });
+
+// const googleMapsLayer = new TileLayer({
+//   source: googleMapsSource
+// });
+
+
+// const map = new Map({
+//   target: 'map',
+//   layers: [
+//     // new TileLayer({
+//     //   source: new OSM()
+//     // })
+//     googleMapsLayer
+//   ],
+//   view: new View({
+//    // center: [10.4964249, 61.2641154],
+//     center: [61.2641154,10.4964249],
+ 
+//     zoom: 2
+//   })
+// });
+
+// import './style.css';
+// import {Map, View} from 'ol';
+// import TileLayer from 'ol/layer/Tile';
+// import OSM from 'ol/source/OSM';
+
 // const map = new Map({
 //   target: 'map',
 //   layers: [
@@ -40,7 +80,8 @@ import Text from "ol/style/Text";
 
 import RegularShape from 'ol/style/RegularShape.js';
 import Icon from 'ol/style/Icon.js';
-
+ import XYZ from 'ol/source/XYZ';
+ import Overlay from 'ol/Overlay.js';
 
 //import Style from "ol/style/Style";
 //style i spesifiklestirmek istedgimz zaman burayi kullaniriz
@@ -205,16 +246,16 @@ mySpecificStyleByFeature = function(feature){
   //ol.feature aramasi ile dokumantasyonu incelersek bizim feature.setStyle ile her bir feature mize spesifik bir style atamasi yapabilirz ayrica da bu style lari da get ile alabiliriz..
   //Bu sekilde biz bir feature nin type ini alabilriz.
   let geometryType = feature.getGeometry().getType();
-  console.log("geometryType: ",geometryType);
-  console.log("getKeys(): ",feature.getKeys());
-  console.log("getKeys(): ",feature.get('name'));//Bu sekilde atanmis olan name lere erisilebilir...
+  // console.log("geometryType: ",geometryType);
+  // console.log("getKeys(): ",feature.getKeys());
+  // console.log("getKeys(): ",feature.get('name'));//Bu sekilde atanmis olan name lere erisilebilir...
   let name = feature.get('name');
 
   //Text styles
   let featureID = feature.get("id");
   featureID = featureID.toString();
-  console.log("featureIDD: ",featureID);
-  console.log("getKeys(): ",feature.getKeys());
+  // console.log("featureIDD: ",featureID);
+  // console.log("getKeys(): ",feature.getKeys());
   let textStyles = new Style({
     //import Style from 'ol/style/Style.js'; text	Text | undefined	 Text class style.
     //ol/style/Text~Text new Text(options) ve bircok options gorebiliriz text kullanirken...burda da yine feature a ozel text kullanma imkanina sahibiz...
@@ -237,8 +278,8 @@ mySpecificStyleByFeature = function(feature){
   }
   //featurePolygon3
   if(geometryType === "Polygon"){
-    console.log("Polygon-feature: ",feature);
-    console.log("Polygon-name: ",name);//featurePolygon2,featurePolygon3
+    // console.log("Polygon-feature: ",feature);
+    // console.log("Polygon-name: ",name);//featurePolygon2,featurePolygon3
     if(name === "featurePolygon2"){
        feature.setStyle([featurePolygonStyle2]);
     }
@@ -284,20 +325,39 @@ const map = new Map({
    }),
 });
 
-let pointInteraction;
-pointInteraction=new Draw({
-  type:"Point",
-  source:source,
- }) 
+// const googleMapsSource = new XYZ({
+//   url: 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+//   tileSize: [256, 256],
+//   maxZoom: 20,
+//   attributions: [
+//     '<a href="https://www.google.com/maps">Google Maps</a>',
+//     '<a href="https://www.google.com/intl/en-US_US/help/terms_maps/">Terms of Use</a>'
+//   ],
+//   crossOrigin: 'anonymous',
+//   apiKey: 'YOUR_API_KEY_HERE'
+// });
 
-map.addInteraction(pointInteraction);
+// const googleMapsLayer = new TileLayer({
+//   source: googleMapsSource
+// });
 
- pointInteraction.on("drawend",function(event){
-  console.log("point-feature_ ",event.feature);
-  event.feature.set("id","new-point");
-  //map.removeInteraction(pointInteraction);
- })
 
+// const map = new Map({
+//   target: 'map',
+//   layers: [
+//     // new TileLayer({
+//     //   source: new OSM()
+//     // })
+//     googleMapsLayer,
+//     vector
+//   ],
+//   view: new View({
+//    // center: [10.4964249, 61.2641154],
+//     center: [61.2641154,10.4964249],
+ 
+//     zoom: 2
+//   })
+// });
 
 
 let polyCoords = [
@@ -375,16 +435,16 @@ const polyGeometry = featurePolygon.getGeometry();
 featurePolygon.setGeometryName("featurePolygon");
 featurePolygon.setGeometryName("labelPoint");
 featurePolygon.setId("featurePolygonID");
-console.log(featurePolygon.getGeometryName());
-console.log(featurePolygon.getId());
+// console.log(featurePolygon.getGeometryName());
+// console.log(featurePolygon.getId());
 //Bir featuremize id(setId),name(setGeometryName),style(setStyle) atamalari yapabiliyoruz...
 //AYRICA DA ISTEDIGIMIZ HERHANGI BIR KEYWORD VE VALUE SINI ATAMA YAPIP DAHA SONRA DA O KEYWORE ERISEBILIYORUZ...
 featurePolygon.set("title","featurePolygonTitle");
 featurePolygon.set("color","blue");
 featurePolygon.set("style","blue");
-console.log(featurePolygon.get("color"));//blue
-console.log(featurePolygon.get("style"));//blue
-console.log(featurePolygon.get("title"));
+// console.log(featurePolygon.get("color"));//blue
+// console.log(featurePolygon.get("style"));//blue
+// console.log(featurePolygon.get("title"));
 //AYRICA PROPERTIES ATAMASI DA YAPABILYORUZ...setproperties.. ile ve de getproperties ile alabilyoruz
 //setKeys ve getKeys ile de ayni sekilde keys atamasi ve okumasi yapaibloiriz
 
@@ -452,38 +512,3 @@ map.on("click",function(event){
   console.log("coordinates_: ",event.coordinate);
 })
 
-
-
-
-/*
-BUNLARDA INCELENMELI....
-var aObjects = JSON.parse(sJsonRet);
-			var aIconFeatureList = [];
-
-			for (let i = 0; i < aObjects.length; i++) {
-				let lon = aObjects[i]['lon'];
-				let lat = aObjects[i]['lat'];
-
-				let oIconFeature = new ol.Feature({
-					name: 'cabin',
-					type: 'icon',
-					geometry: new ol.geom.Point(ol.proj.fromLonLat([parseFloat(lon), parseFloat(lat)]))
-				});
-				let iconStyle = new ol.style.Style({
-					image: new ol.style.Icon({
-						anchor: [0, 35],
-						anchorXUnits: 'fraction',
-						anchorYUnits: 'pixels',
-						opacity: 0.9,
-						scale: 0.5,
-						rotation: 0,
-						src: (aObjects[i]['validcont'] === 'T') ? "img/cottage_green.svg" :
-							"img/cottage_red.svg"
-					}),
-					zIndex: 1
-				});
-
-				oIconFeature.setStyle(iconStyle);
-				aIconFeatureList.push(oIconFeature);
-
-*/
