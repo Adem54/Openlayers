@@ -612,6 +612,7 @@ map.on("pointermove", pointerMoveHandler);//Mouse u uzerinde gezdirdigmzde surek
 //var listener;
 
 draw.on("drawstart", function(event){
+  console.log("event.target-drawstart: ",event.target);
   //set sketch
   sketch =  event.feature;
   console.log("Test-type ", sketch.getGeometry().getType());
@@ -622,23 +623,35 @@ draw.on("drawstart", function(event){
    */
   var tooltipCoord = event.coordinate;
 
+  //DEMEKKI BIZ FEATURE UZERINDENDE CHANGE EVENTINI KULLANABILIYORUZ..DRAWSTART ICINDE-BU COK ONEMLI... 
+  sketch.on("change", function(event){
+    console.log("sketch-currentFeature-event", event.target);
+  })
+
+   //DEMEKKI BIZ GEOMETRY-(POINT-POLYGON-LINESTRING) UZERINDENDE CHANGE EVENTINI KULLANABILIYORUZ..DRAWSTART ICINDE-BU COK ONEMLI...
   //listener = sketch.getGeometry().on("change", function(event)){}
   sketch.getGeometry().on("change", function(event){
+    console.log("event.target-geometry change: ",event.target);
     var geom = event.target;
     var output;
     if(geom instanceof Polygon){
-      output = formatArea(geom);
+      output = formatArea(geom);//Dinamik olarak parametresie verilen geometry nin alanini hespaliyor.. 
       tooltipCoord = geom.getInteriorPoint().getCoordinates();
+     //Polygon geometrysiine has birsey getInteriorPoint ve cokgenini agirlik merkezi yani ortasina gelecek olan mesaj kutusunu yani bu polygon cizilme asamasinda dinamik olarak calisiyor yani polygona her yeni bir kosegen veya nokta cizildiginde genisledigi icin agirlik merkezi degisiyor ve biz getInteriorPoint sayesinde agirlik merkezini dinamik olarak alarak polygon ile alan cizimi esnasinda mesaj kutusunu dinamik olarak her yeni bir kosegene veya nokta ile cizdigmz alan genislediginde mesaj kutusu her zaman cizilen alanin ortasinda kaliyor
+      console.log("COORDINATESSS: ", geom.getCoordinates())
+      console.log("COORDINATESSS- tooltipCoord: ", tooltipCoord)
+      
     }else if(geom instanceof LineString){
       output = formatLength(geom);
       tooltipCoord = geom.getLastCoordinate();
+      //Burda line cizimii esnasina her zaman mesaj kutusu sonCoordinate da gozukecek
     }
     measureTooltipElement.innerHTML = output;
     measureTooltip.setPosition(tooltipCoord);
   })
 });
 
-
+//Cizimi bitirdigmizde de measurement i goster diyoruz
 draw.on("drawend", function(){
   measureTooltipElement.className = "ol-tooltip ol-tooltip-static";
   measureTooltip.setOffset([0, -7]);
@@ -646,7 +659,7 @@ draw.on("drawend", function(){
   sketch = null;
   //unset tooltip so that a new can be created 
   measureTooltipElement = null;
-  createMeasureTooltip();
+  createMeasureTooltip();//Cizim bittigi anda hesaplamayi yapar
   //ol.Observable.unByKey(listener)
 })
 
@@ -684,6 +697,10 @@ function createHelpTooltip() {
   map.addOverlay(helpTooltip);
 }
 
+console.log("map.getViewport(): ",map.getViewport());
+/*
+getViewport ile biz map imizin icinde bulundugu ve bizim index.html de olutrudgumz <div id="map"></div> in nested elementi yani openlayersdan gelen map i icinde bulunduran div elemnte erismis oluyoruz
+ */
 map.getViewport().addEventListener("mouseout",function(){
   helpTooltipElement.classList.add("hidden");
 });
@@ -727,6 +744,7 @@ function createMeasureTooltip() {
  * @param {LineString} line The line.
  * @return {string} The formatted length.
  */
+//LineString cizdigmiz zaman cizilen alani hesapliyor
 var formatLength = function (line) {
   //import {getArea, getLength} from 'ol/sphere.js'; genLength in openlayers tarafindan taninmasi icni import edilmesi gerek
   var length = getLength(line);
@@ -744,7 +762,9 @@ var formatLength = function (line) {
  * @param {Polygon} polygon The polygon.
  * @return {string} Formatted area.
  */
-var formatArea = function (polygon) {
+//Cizilen polygon alanini hesaplamaya yariyor
+var formatArea = function (polygon) {//PARAMETREYE GEOMETRY ALIYOR (NEW GEOMETRY())
+//  import {getArea, getLength} from 'ol/sphere.js'; bunu import ederek getArea yi kullanabilyoruz
   var area = getArea(polygon);
   var output;
   if (area > 10000) {
