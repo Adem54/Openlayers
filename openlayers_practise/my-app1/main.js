@@ -14,8 +14,16 @@ import ScaleLine from 'ol/control/ScaleLine.js';
 import Overlay from 'ol/Overlay.js';
 import $ from "jquery";
 import Control from 'ol/control/Control.js';
-
-
+import VectorSource from 'ol/source/Vector.js';
+import VectorLayer from 'ol/layer/Vector.js';
+import Style from 'ol/style/Style.js';
+import Fill from 'ol/style/Fill.js';
+import Stroke from 'ol/style/Stroke.js';
+import CircleStyle from 'ol/style/Circle.js';
+import Draw from 'ol/interaction/Draw.js';
+import Polygon from 'ol/geom/Polygon.js';
+import LineString from 'ol/geom/LineString.js';
+import {getArea, getLength} from 'ol/sphere.js';
 
 let mapView =new View({
   center: fromLonLat([78.766032, 23.7662398]),
@@ -411,4 +419,340 @@ const map = new Map({
 
 //end:full screen control
 
+//MEASURE LAND AND MEASURE AREA CONTROLLER 
+//MEASURE LAND ILE BIZ SECILEN NOKTALAR ARASINDAKI UZUNLUKLARI OLCECEGIZ.. 
+//MEASURE AREAA ILE ISE BIZ SECILEN ALAN-AREA NIN SQURE METER-KMETER BOYTUNU ALIRIZ 
 
+
+//START : Length and Area Measurement Control 
+let lengthButton = document.createElement("button");
+lengthButton.innerHTML = `<img src='resources/images/measure-length.png' alt='' style='width:30px; height:30px; cursor:pointer;
+background-color:cyan;    vertical-align:middle; margin-left:14px;'></img>  `;
+lengthButton.className = "myButton";
+lengthButton.id = "lengthButton";
+
+let lengthElement = document.createElement("div");
+lengthElement.className = "lengthButtonDiv";
+lengthElement.appendChild(lengthButton);
+
+let lengthControl =  new Control({
+  element:lengthElement
+});
+
+let lengthFlag = false;
+lengthButton.addEventListener("click", ()=>{
+  //disableOtherInteraction('lengthButton'))
+  lengthButton.classList.toggle("clicked");
+  lengthFlag = !lengthFlag;//Toggle uygulamak icin yapiyoruz toggle in manuel olarak  yapilmasidir bu.. 
+  //Yani lengtFlag true olarak gelirse false a ceviririz false olarak gelirse de true ya ceviririz ve bundan sonra toggle ozelligini uzerinde uygulamak istedgimz ozellikleri if(lengtFlag icinde yaparak o zaman zaten bu islem i toggle seklinde yapmis olacagiz)
+  document.getElementById("map").style.cursor = "default";
+  if(lengthFlag){
+    map.removeInteraction(draw);
+    addInteractions("LineString");
+  }else{
+    map.removeInteraction(draw);
+    source.clear();
+    const elements = document.getElementsByClassName("ol-tooltip ol-tooltip-static");
+    while(elements.length > 0)elements[0].remove();//Dinamik bir sekilde tum elementleri silme bestpractise... HARIKA BESTPRACTISE... 
+  }
+})
+
+map.addControl(lengthControl);
+
+let areaButton = document.createElement("button");
+areaButton.innerHTML = `<img src='resources/images/measure-area.png' alt='' style='width:30px; height:30px; cursor:pointer;
+background-color:cyan;    vertical-align:middle; margin-left:14px;'></img>  `;
+areaButton.className = "myButton";
+areaButton.id = "areaButton";
+
+let areaElement = document.createElement("div");
+areaElement.className = "areaButtonDiv";
+areaElement.appendChild(areaButton);
+
+let areaControl =  new Control({
+  element:areaElement
+});
+
+let areaFlag = false;
+
+areaButton.addEventListener("click", ()=>{
+  //disableOtherInteraction("areaButton");
+  areaButton.classList.toggle("clicked");
+  areaFlag = !areaFlag;
+  document.getElementById("map").style.cursor = "default";
+  if(areaFlag){
+    map.removeInteraction(draw);
+    addInteractions("Polygon");
+  }else{
+    map.removeInteraction(draw);
+    source.clear();
+    const elements = document.getElementsByClassName("ol-tooltip ol-tooltip-static");
+    while(elements.length > 0)elements[0].remove();//Dinamik bir sekilde tum elementleri silme bestpractise... HARIKA BESTPRACTISE... 
+  }
+})
+
+map.addControl(areaControl);
+
+/**
+ * Message to show when user is drawing a polygon
+ * @type {string}
+ */
+var continuePolygonMsg = "Click to continue polygon, Double click to complete";
+
+/**
+ * Message to show when the user is drawing a line
+ * @type {string}
+ */
+
+var continueLineMsg = "Click to continue line, Double click to complete";
+
+var draw;//global so we can remove it later
+
+//ol/source/Vector~VectorSource - import VectorSource from 'ol/source/Vector.js';
+var source = new VectorSource({wrapX:false});
+var vector = new VectorLayer({
+  source:source,
+  style:new Style({
+    fill:new Fill({
+      color:"rgba(255,255,255,0.2)",
+    }),
+    stroke:new Stroke({
+      color:"#ffc33",
+      width:2,
+    }),
+    image:new CircleStyle({
+      radius:7,
+      fill:new Fill({
+        color:"#ffcc33"
+      })
+    })
+  })
+})
+
+map.addLayer(vector);
+
+function addInteractions(intType){
+  draw = new Draw({
+    source:source,
+    type:intType,
+    style:new Style({
+      fill:new Fill({
+        color:"rgba(200,200,200,0.6)",
+      }),
+      stroke:new Stroke({
+        color:"rgba(0,0,0,0.5)",
+        width:2,
+      }),
+      image:new CircleStyle({
+        radius:5,
+        fill:new Fill({
+          color:"rgba(255,255,255,0.2)"
+        }),
+        stroke:new Stroke({
+          color:"rgba(0,0,0,0.7)",
+         
+        }),
+      })
+    })
+  });
+
+
+  map.addInteraction(draw);
+
+
+
+// map.addInteraction(new Draw({
+//   type:"LineString",
+
+// }));
+
+createMeasureTooltip();
+createHelpTooltip();
+
+/**
+ * Currently drawn feature
+ * @type {import("../src/ol.Feature.js").default}
+ */
+var sketch;//o anda cizilen currentFeature yi temsil ediyor
+/**
+ * Handle pointer move
+ * @param {import("../src/ol/MapBrowserEvent").default} event The event
+ */
+
+
+var pointerMoveHandler =  function(event){
+  console.log("pointerMoveHandler: ")
+  if(event.dragging){
+    return;
+  }
+  /** @type {string} */
+  var helpMsg = "Click to start drawing";
+
+  if(sketch){
+    var geom = sketch.getGeometry();
+    if (geom instanceof Polygon) {//Eger cizilen feature nin (event.feature diye aliniyor sketch) getGeometry() si bir polygondan mi turemis yoksa LineString den mi seklinde bu sekilde bunu ayirt edebiliyoruz.BESTPRACTISE KULLANIM BEN BU SEKILDE KULLANMADIM HIC..  
+      //Ben bunu normalde  console.log("Test-type ", sketch.getGeometry().getType()); bu yoontemle yapiyorum interaction in Polygon mu, LineString mi ya da Point mi oldugunu ayirt etmek icin ama bu da yeni ve guzel bir yontem olmus
+      //Eger polygon ise polygon mesajini yazdir helpMsg iceriginde yok LineString ise o zaman da LineString mesajin yazdir diyoruz
+      helpMsg = continuePolygonMsg;
+    } else if (geom instanceof LineString) {
+      helpMsg = continueLineMsg;
+    }
+
+  }
+  helpTooltipElement.innerHTML=helpMsg;
+  //helpTooltip ise bir overlay dir elementi helpTooltipElement olan bir overlay dir .. Unutmayalim.. 
+  //SetPosition i vermemiz gerekiyor..overlay i alabilmek icin 
+  helpTooltip.setPosition(event.coordinate);
+
+  helpTooltipElement.classList.remove("hidden");
+};
+
+map.on("pointermove", pointerMoveHandler);//Mouse u uzerinde gezdirdigmzde surekli olarak gelen mesaj yazisini goruyoruz pointermove eventi sayesinde
+
+//var listener;
+
+draw.on("drawstart", function(event){
+  //set sketch
+  sketch =  event.feature;
+  console.log("Test-type ", sketch.getGeometry().getType());
+  //type i bu sekilde bulabilirz..yani draw interaction inin LineString mi , Polygon mu bunu alabliriz
+
+  /**
+   * @type {import ("../src/ol/coordinate.js").Coordinate|undefined}
+   */
+  var tooltipCoord = event.coordinate;
+
+  //listener = sketch.getGeometry().on("change", function(event)){}
+  sketch.getGeometry().on("change", function(event){
+    var geom = event.target;
+    var output;
+    if(geom instanceof Polygon){
+      output = formatArea(geom);
+      tooltipCoord = geom.getInteriorPoint().getCoordinates();
+    }else if(geom instanceof LineString){
+      output = formatLength(geom);
+      tooltipCoord = geom.getLastCoordinate();
+    }
+    measureTooltipElement.innerHTML = output;
+    measureTooltip.setPosition(tooltipCoord);
+  })
+});
+
+
+draw.on("drawend", function(){
+  measureTooltipElement.className = "ol-tooltip ol-tooltip-static";
+  measureTooltip.setOffset([0, -7]);
+  //unset sketch 
+  sketch = null;
+  //unset tooltip so that a new can be created 
+  measureTooltipElement = null;
+  createMeasureTooltip();
+  //ol.Observable.unByKey(listener)
+})
+
+}
+
+/**
+ * The help tooltip element
+ * @type {HTMLElement}
+ */
+
+var helpTooltipElement;
+
+/**
+ * Overlay to show the help messages.
+ * @type {Overlay}
+ */
+
+var helpTooltip;
+
+/**
+ * Creates a new help tooltip
+ */
+
+function createHelpTooltip() {
+  if (helpTooltipElement) {
+    helpTooltipElement.parentNode.removeChild(helpTooltipElement);
+  }//Once var olan tooltip i kaldiriyoruz 
+  helpTooltipElement = document.createElement('div');
+  helpTooltipElement.className = 'ol-tooltip hidden';
+  helpTooltip = new Overlay({
+    element: helpTooltipElement,
+    offset: [15, 0],
+    positioning: 'center-left',
+  });
+  map.addOverlay(helpTooltip);
+}
+
+map.getViewport().addEventListener("mouseout",function(){
+  helpTooltipElement.classList.add("hidden");
+});
+
+/**
+ * The measure tooltip element.
+ * @type {HTMLElement}
+ */
+var measureTooltipElement;
+
+/**
+ * Overlay to show the measurement
+ * type {Overlay}
+ */
+
+var measureTooltip;
+
+
+/**
+ * Creates a new measure tooltip
+ */
+function createMeasureTooltip() {
+  if (measureTooltipElement) {
+    measureTooltipElement.parentNode.removeChild(measureTooltipElement);
+  }
+  measureTooltipElement = document.createElement('div');
+  measureTooltipElement.className = 'ol-tooltip ol-tooltip-measure';
+  measureTooltip = new Overlay({
+    element: measureTooltipElement,
+    offset: [0, -15],
+    positioning: 'bottom-center',
+    stopEvent: false,
+    insertFirst: false,
+  });
+  map.addOverlay(measureTooltip);
+}
+
+
+/**
+ * Format length output.
+ * @param {LineString} line The line.
+ * @return {string} The formatted length.
+ */
+var formatLength = function (line) {
+  //import {getArea, getLength} from 'ol/sphere.js'; genLength in openlayers tarafindan taninmasi icni import edilmesi gerek
+  var length = getLength(line);
+  var output;
+  if (length > 100) {
+    output = Math.round((length / 1000) * 100) / 100 + ' ' + 'km';
+  } else {
+    output = Math.round(length * 100) / 100 + ' ' + 'm';
+  }
+  return output;
+};
+
+/**
+ * Format area output.
+ * @param {Polygon} polygon The polygon.
+ * @return {string} Formatted area.
+ */
+var formatArea = function (polygon) {
+  var area = getArea(polygon);
+  var output;
+  if (area > 10000) {
+    output = Math.round((area / 1000000) * 100) / 100 + ' ' + 'km<sup>2</sup>';
+  } else {
+    output = Math.round(area * 100) / 100 + ' ' + 'm<sup>2</sup>';
+  }
+  return output;
+};
+
+//End : Length and Area Measurement Controll
