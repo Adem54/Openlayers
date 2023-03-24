@@ -24,6 +24,8 @@ import Draw from 'ol/interaction/Draw.js';
 import Polygon from 'ol/geom/Polygon.js';
 import LineString from 'ol/geom/LineString.js';
 import {getArea, getLength} from 'ol/sphere.js';
+import DragBox from 'ol/interaction/DragBox.js';
+import {getCenter} from 'ol/extent';
 
 let mapView =new View({
   center: fromLonLat([78.766032, 23.7662398]),
@@ -776,3 +778,107 @@ var formatArea = function (polygon) {//PARAMETREYE GEOMETRY ALIYOR (NEW GEOMETRY
 };
 
 //End : Length and Area Measurement Controll
+
+
+//ZOOM-IN / ZOOM-OUT OZELLIGINI DIKDORGEN BIR ALANI SECIP DRAG-DROP YAPARAK SECILEN ALANA ZOOM-IN YAPAN CONTROL OLUSTURMA
+//start :zoomIn Control 
+
+//ol/interaction/DragBox~DragBox
+//Allows the user to draw a vector box by clicking and dragging on the map, normally combined with an ol/events/condition that limits it to when the shift or other key is held down. This is used, for example, for zooming to a specific area of the map (see DragZoom and DragRotateAndZoom).
+var zoomInInteraction = new DragBox({}); 
+
+//boxend (DragBoxEvent) - Triggered upon drag box end.
+zoomInInteraction.on("boxend", function(){
+  console.log("boxend-dragbox");
+  //Bu da cok onemli bir bilgi, zoomInteraction uzerinden biz getGeometry ile o anda dragbox ile normalde en son geometry nin coordinatlari polygon da 5 tane icinde x,y coordinatlari olan dizi olark gelir ancak getExtent iste bu gelen polygon coordinatlarindan dikdortgen kisimlarini iceren koordinatlari bir dizi icinde toplayarak, dikdortgene ait 4 koordinati  aliyor 
+  //Normal polygon uzerinden getCoordinates de gelen ([x1,y1]-sol ust kose, [x1,y2] sol alt kose, [x2,y2] sag alt kose, [x2,y1] sag ust kose)
+  //seklinde gelirken getExtent ile ise sadece duzlem koordinatlarini veriyor, bu duzlem koorinatlarinin kesisimi arasindan bir dikdortgen meyadana gliyor iste bize onu veriyor [X1,Y2,X2,Y1]
+  var zoomInExtent = zoomInInteraction.getGeometry().getExtent();
+  console.log("boxend-zoomInExtent: ",zoomInExtent);// [8276995.980327919, 2399789.5397829735, 9197128.557294073, 3057027.0947587974]
+  console.log("zoomInInteraction.getGeometry(): ",zoomInInteraction.getGeometry())//Polygon geometrysini verir
+  console.log("zoomInInteraction.getGeometry(): ",zoomInInteraction.getGeometry().getCoordinates())
+  //ol/interaction/DragBox~DragBox - getGeometry(){Polygon}(Returns geometry of last drawn box.)
+//zoom islemi zaten map icindeki view a ait bir option oldugu icin, biz eger ekstra bir zoom interaction i ekleyeceksek, DragBox ile o zaman a anda secilen alan in geometry sini extend edip bunu view a fit ederiz
+  map.getView().fit(zoomInExtent);
+});
+
+var ziButton = document.createElement("button");
+ziButton.innerHTML= `<img src='resources/images/zoom-in.png' alt='' style='width:30px; height:30px; cursor:pointer;
+background-color:cyan;    vertical-align:middle; margin-left:14px;'></img>  `;
+ziButton.className = "myButton";
+ziButton.id="ziButton";
+
+var ziElement = document.createElement("div");
+
+ziElement.className = "ziButtonDiv";
+ziElement.appendChild(ziButton);
+
+var ziControl = new Control({
+  element:ziElement
+});
+
+var zoomInFlag = false;
+
+ziButton.addEventListener("click", ()=>{
+  ziButton.classList.toggle("clicked");
+  zoomInFlag = !zoomInFlag;
+  if(zoomInFlag){
+    document.getElementById("map").style.cursor = "zoom-in";
+    map.addInteraction(zoomInInteraction);    
+  }else{
+    map.removeInteraction(zoomInInteraction);
+  }
+})
+
+map.addControl(ziControl);
+
+//end : zoomInControl 
+
+//start : zoomOut Control 
+
+var zoomOutInteraction = new DragBox({}); 
+
+//boxend (DragBoxEvent) - Triggered upon drag box end.
+zoomOutInteraction.on("boxend", function(){
+  console.log("boxend-dragbox");
+  
+  var zoomOutExtent = zoomOutInteraction.getGeometry().getExtent();
+  console.log("zoomOutExtend: ",zoomOutExtent);
+//zoomOutExtent Center of the rectangle... ayni sekilde rectangle a ait
+//import {getCenter} from 'ol/extent';
+//import * as olExtent from 'ol/extent';
+//Get the center coordinate of an extent.
+  map.getView().setCenter(getCenter(zoomOutExtent));
+  mapView.setZoom(mapView.getZoom() -1);
+  //Her tiklamada bir adim daha zoom-out yapacak, uzaklasacak
+});
+
+var zoButton = document.createElement("button");
+zoButton.innerHTML= `<img src='resources/images/zoom-out.png' alt='' style='width:30px; height:30px; cursor:pointer;
+background-color:cyan;    vertical-align:middle; margin-left:14px;'></img>  `;
+zoButton.className = "myButton";
+zoButton.id="zoButton";
+
+var zoElement = document.createElement("div");
+
+zoElement.className = "zoButtonDiv";
+zoElement.appendChild(zoButton);
+
+var zoControl = new Control({
+  element:zoElement
+});
+
+var zoomOutFlag = false;
+
+zoButton.addEventListener("click", ()=>{
+  zoButton.classList.toggle("clicked");
+  zoomOutFlag = !zoomOutFlag;
+  if(zoomOutFlag){
+    document.getElementById("map").style.cursor = "zoom-in";
+    map.addInteraction(zoomOutInteraction);    
+  }else{
+    map.removeInteraction(zoomOutInteraction);
+  }
+})
+
+map.addControl(zoControl);

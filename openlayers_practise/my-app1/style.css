@@ -132,6 +132,20 @@ ol.popup-closer:after {
   margin-top: .8rem;
 }
 
+.ziButtonDiv{
+  display:flex;
+  justify-content: flex-end;
+  padding-right: 4rem;
+  margin-top: 1rem;
+}
+
+.zoButtonDiv{
+  display:flex;
+  justify-content: flex-end;
+  padding-right: 4rem;
+  margin-top: 1rem;
+}
+
 .myButton {
   background-color: rgba(22,85,167,.6);
   background: none;
@@ -195,5 +209,9 @@ ol.popup-closer:after {
   border-top-color: #ffcc33;
 }
 
+.ol-dragbox{
+  border:2px dashed grey;
+  background-color: rgba(200,200,200,0.6);
+}
 
 /*Measure tool styles- end*/
