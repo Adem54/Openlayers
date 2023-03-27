@@ -779,7 +779,6 @@ var formatArea = function (polygon) {//PARAMETREYE GEOMETRY ALIYOR (NEW GEOMETRY
 
 //End : Length and Area Measurement Controll
 
-
 //ZOOM-IN / ZOOM-OUT OZELLIGINI DIKDORGEN BIR ALANI SECIP DRAG-DROP YAPARAK SECILEN ALANA ZOOM-IN YAPAN CONTROL OLUSTURMA
 //start :zoomIn Control 
 
