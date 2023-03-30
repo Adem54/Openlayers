@@ -26,6 +26,19 @@ import {
 import {fromLonLat} from 'ol/proj';
 
 
+const fontSymbol = new FontSymbol({
+  form: 'marker', // or 'hexagon', 'square', 'triangle' etc.
+  radius: 10,
+   glyph: 'ue800',//
+   fontSize:16,
+  
+  color: 'red'
+});
+
+const styleFontSymbol = new Style({
+  image: fontSymbol
+});
+
 let cities = [
   // {id:1,name:"Skien",coord:[1068935.7233506376, 8225579.575152853],places:skienPlaces},
   {id:1,name:"Skien-1",coord:[1067745.2998383467, 8222799.520519945]},
@@ -93,8 +106,6 @@ let skienFeature = new Feature({
 skienFeature.set("city","Skien");
 municipalityFeatures.push(skienFeature);
 
-
-
 let mapLayers = [
   new TileLayer({
     source: new OSM(),
@@ -142,12 +153,11 @@ let clusterLayer = new AnimatedCluster({
   name:"Cluster",
   source:clusterSource,
   style:getStyle
+  // style:styleFontSymbol
 })
 //Burasi normalde AnimatedCluster isminde bir extention i ekleyip onu kullanacaktik ama onu install edemedik ondan dolayi simdililk normal Vectorlayer kullanalim..clusterLayer icin , bu su demek hangi featuerslerimzi cluster ozelligi ile kullanacagiz.. yani point feature lerimzi
 
 map.addLayer(clusterLayer);
-
-
 
 map.getAllLayers().forEach(layer=>{
   console.log(layer.get("name"))
@@ -163,9 +173,18 @@ function getStyle(feature,resolution){
   var featSize =  feature.get("features").length;
   console.log("featSize: ",featSize);
   var totalPopulation = 0;
-  //Gruplanan feature leri burda donduruyoruz yani burda ornegin cluster ozelligi ile haritayi ilk actigmzda 2 ayri yerde 20-24 adet 2 nokta gozukuyor ise o zaman burda feature dedigi o an biz kac adet ayri ayri yuvarlak goruyorsak her birisi featureslardan olusan yani dizi olarak gelen feature dur feature derken parametreye gelen feature manasinda yook sa tek basian feature degildir feature lardan olusan dizidir parametreye gelen feature ...Her bir grup tur feature aslinda yani o feature u biz foreach ile dondururnce her bir featuremize erisebiliriz ancak ve de her bir feature miziin icerisindeki spesifik degerlere gore onlara style ayarlamasi yapabiliriz
+  /*Gruplanan feature leri burda donduruyoruz yani burda ornegin cluster ozelligi ile
+   haritayi ilk actigmzda 2 ayri yerde 20-24 adet 2 nokta gozukuyor ise o zaman burda 
+   feature dedigi o an biz kac adet ayri ayri yuvarlak goruyorsak her birisi featureslardan
+    olusan yani dizi olarak gelen feature dur feature derken parametreye gelen feature
+     manasinda yook sa tek basian feature degildir feature lardan olusan dizidir
+      parametreye gelen feature ...Her bir grup tur feature aslinda yani o feature u
+       biz foreach ile dondururnce her bir featuremize erisebiliriz ancak ve de her
+        bir feature miziin icerisindeki spesifik degerlere gore onlara style ayarlamasi yapabiliriz
+   */
 
-  //Burda biz feature uzerine feature a ait populasyonu basabiliriz bu sekilde yani feature lerimiz iceriisindeki herhangi bir datayi basabiliriz... 
+  /* Burda biz feature uzerine feature a ait populasyonu basabiliriz bu sekilde 
+  yani feature lerimiz iceriisindeki herhangi bir datayi basabiliriz...  */
   for(var j = 0; j < feature.get("features")[j]["population"]; j++){
     var population = parseInt(feature.get("features")[j].get("population"),10);
     // totalPopulation = totalPopulation + population;
