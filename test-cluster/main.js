@@ -198,7 +198,7 @@ const source = new VectorSource({
 
 const clusterSource = new Cluster({
   //distance: parseInt(50, 10),//input value sinden 40 geliyor 
-  distance:35,
+  distance:30,
   //10 sayisi arttikca haritadaki noktalar azaliyor aralrindanki mesafe artiyor..ama 10 sayisi 5 olunca nokta sayisi artarken aralarindaki distance azaliyor
   minDistance: parseInt(20, 10),
   source: source,
