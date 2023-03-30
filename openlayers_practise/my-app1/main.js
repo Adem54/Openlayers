@@ -881,3 +881,6 @@ zoButton.addEventListener("click", ()=>{
 })
 
 map.addControl(zoControl);
+
+//HOW TO ADD ATTRIBUTE QUERY - BIR LINKE TIKLANILDIGI ZAMAN QUERY ISLEMI YAPAN KUTU ACILACAK VE ICERSINDEN SECENEKLER SECILIP MAP UZERINDE VERITABANINDAN QUERY CALISTIRACAK
+//query dialob box u gosterebilmek icn html icerisine component ekleyecegiz

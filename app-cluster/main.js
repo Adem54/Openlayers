@@ -162,7 +162,7 @@ map.on('click', (e) => {
     }
   });
 
-  Bu kisimda biz const features = clickedFeatures[0].get('features'); olarak tikladigmz point altinda kac tane feature var ise onlari bir dizi icerisinde aldigmiz yerdir ve bura da her bir dizimize ait spesifk name, id vs var ise onlari foreach ile dondurerek alabiliriz
+  Yukardaki map.on("click",(e)=>{ ) kisimda biz const features = clickedFeatures[0].get('features'); olarak tikladigmz point altinda kac tane feature var ise onlari bir dizi icerisinde aldigmiz yerdir ama tiklanan point altindaki feature lari de zaten cluster ozelligi coordinatlarin birbrine yakinligina gore ayarliyor yani burda bizim features leri parent child iliskisinde yerlestiremize gerek yok biz sadece ilk bas elimizdeki tum feature leri bir dizi icine atariz ve eger varsa spesifik ozelliklerimiz onlari da o feature ler icerisine yazariz geririsini cluster hallediyor ve bura da her bir dizimize ait spesifk name, id vs var ise onlari foreach ile dondurerek alabiliriz
   Ve tiklandigi zaman burasi hem animasyonu  hem padding i ayarliyor hem de tekrar dan tiklanan point altindaki noktalar yakinliklarina gore gruplaniyor ve birkez daha  const clusters = new VectorLayer({ tetiklenerek bunlari bir kez daha yakinliklarina gore grupluyor ve ona gore de her grup features un lengthine gore point markalari uzerinde kac adet feature var ise onlari gorecek sekilde geliyor karsimiza
 
   VE tekrardan gruplanmis olan noktalar dan ornegin uzerinde 4 yazan bir noktaya tikladigmz zaman bu 4 feature a ait datalara erisebiliyoruz ve tekrardan bir zoom-in olmus oluyor her tiklagimzda ve yeniden bir daha yaklasarak birbrine yakinliklarina gore bir gruplama soz konusu olacaktir  
