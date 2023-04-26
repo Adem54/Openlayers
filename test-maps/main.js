@@ -3,12 +3,8 @@ import {Map, View} from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
 import TileWMS from 'ol/source/TileWMS.js';
-
 import {fromLonLat} from 'ol/proj';
-
 import LayerGroup from 'ol/layer/Group.js';
-
-
 import WMTS, {optionsFromCapabilities} from 'ol/source/WMTS.js';
 import WMTSCapabilities from 'ol/format/WMTSCapabilities.js';
 
