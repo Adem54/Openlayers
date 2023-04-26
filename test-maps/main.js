@@ -9,7 +9,7 @@ import WMTS, {optionsFromCapabilities} from 'ol/source/WMTS.js';
 import WMTSCapabilities from 'ol/format/WMTSCapabilities.js';
 
 
-https://kartkatalog.geonorge.no/metadata/terreng-norgeskart-wms/b85de734-b9b4-4719-ad80-fe55ee7415d2
+//https://kartkatalog.geonorge.no/metadata/terreng-norgeskart-wms/b85de734-b9b4-4719-ad80-fe55ee7415d2
 const parser = new WMTSCapabilities();
 let  terrengNorweiganMapWMTS ;
 
@@ -68,14 +68,13 @@ const planAreaWMS = new TileLayer({
     url:"https://openwms.statkart.no/skwms1/wms.planomraade?",
     crossOrigin: 'anonymous',
     	params: {
-					LAYERS: 'PLANOMRADE_WMS',
-          
+					LAYERS: 'PLANOMRADE_WMS',    
           FORMAT:'image/png',
-					VERSION: '1.1.0'
+					VERSION: '1.1.0',
 				}
-
-    // Countries have transparency, so do not fade tiles:
-  //  transition: 0,
+//Layers ile Version i ve de url i kullanmazsak planAreaWMS source ye erisemiyoruz...COOK ONEMLI...
+// Countries have transparency, so do not fade tiles:
+//  transition: 0,
   }),
   visible:false,
   title:"planAreaWMS"
