@@ -350,7 +350,6 @@ function clusterStyle (feature) {
 
 
 
-
  //Burda cok onemli birsey daha var size=1 oldugundaki style i biz dogrudan new Style({}) diye tek bir style da verebiliriz veya o style i if kosullarindan gecirerek kosullara gore de farkli style lar uygulayabiliirz size=1 oldugu durumlarda o zamanda her bir new Style({}) i dizi icine atip dizi olarak alarak da verebiliriz asagida yaptgimz gibi... 
  function styleForSingleFeature(selectedFeature){
  let  dynamic_text_color = selectedFeature.get("name") ? selectedFeature.get("name") :  dynamic_text;  
@@ -505,6 +504,11 @@ source.getFeatures().forEach(feature=>{
 
 
 
+console.log("DEFZOOMLEV: ", map.getView().getZoom());
+map.on("moveend", function(event){
+  var zoomlevel = map.getView().getZoom();
+  console.log("zoomLevel: ",zoomlevel);
+})
 
 /*
 EXAMPLES OF CLUSTER FEATURES IN OPENLAYERS

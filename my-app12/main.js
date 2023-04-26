@@ -508,7 +508,10 @@ source.addFeatures([...features]);
 //2. Sonradan bir feature eklemenin baska bir yolu da budur
 source.addFeatures([featureLine2]);
 
-map.on("click",function(event){
-  console.log("coordinates_: ",event.coordinate);
-})
+for(let i = 1; i<=3; i++ ){
+  console.log("i: ",i);
+  map.on("click",function(event){
+    console.log("coordinates_: ",event.coordinate);
+  })
+}
 

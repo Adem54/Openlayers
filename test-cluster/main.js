@@ -11,8 +11,8 @@ import {
   Stroke,
   Style,
   Text,
-
 } from 'ol/style.js';
+
 import {Cluster, Vector as VectorSource} from 'ol/source.js';
 import {Tile as TileLayer2, Vector as VectorLayer} from 'ol/layer.js';
 import {boundingExtent} from 'ol/extent.js';
@@ -196,7 +196,9 @@ const source = new VectorSource({
   features: [...municipalityFeatures],
 });
 
+//Cluster da ol/source den geliyor yani aslindas bir tur source dir ve herhangi layer in option i olarak kullanilir ve kendi option i icerisinde de feature lerle olusturulmus bir VectorSource den olusur
 const clusterSource = new Cluster({
+  name:"clusterSource-NAME",
   //distance: parseInt(50, 10),//input value sinden 40 geliyor 
   distance:30,
   //10 sayisi arttikca haritadaki noktalar azaliyor aralrindanki mesafe artiyor..ama 10 sayisi 5 olunca nokta sayisi artarken aralarindaki distance azaliyor
@@ -204,151 +206,159 @@ const clusterSource = new Cluster({
   source: source,
 });
 
+
+console.log("clusterSource-features-lengthhh: ",clusterSource.getSource().getFeatures().length);
+
 const styleCache = {};
 
-//Burdaki feature lar harita da ilk actigimzda karsimiza gelen pointlerdir noktalardir ve biz zoom-in yaptgmizda bu noktlarin sayisi artiyor
-// const clusters = new VectorLayer({
-  const clusters = new AnimatedCluster({
+//Burdaki feature lar harita da ilk actigimzda karsimiza gelen pointlerdir noktalardir ve biz zoom-in yaptgmizda bu noktlarin sayisi artiyor..AnimatedCluster bir layer a karsilik geliyor... bunu bilelim
+// const clusters = new AnimatedCluster({
+  const clusters = new VectorLayer({
   //AnimatedCluster
   name:"Clusterlayer",
-  source: clusterSource,
-  style: function (feature) {
-   // console.log("feature.get('features'): ",feature.get('features'));
-    //Her bir feature icerisinde o feature ye ait features isminde key var ve onun value si de onun alt feature leridir yani dizi icerisindeki feature lerdir... 
-    
-    const size = feature.get('features').length;//Kac tane ise o numarayi gosteriyoruz bakinca kullanici sunu bilecek bu point marker kac numara gosteriyorsa yaklasinca o adette alt datalarini gorecek
-   let originalFeature = feature.get("features")[0];
-           let name = originalFeature.getKeys();
-      // console.log("keys: ",name);
-      // console.log("city: ",originalFeature.get("city"));
-      // console.log("name: ",originalFeature.get("name"));
-    //BESTPRACTISE....
-    //Burda eger ki size:1 ise o zaman sen bu pointin artik detay bilgilerini gosteren style i uygula diyebiliriz... 
-    console.log("size: ",size);
-    //Burda gruplayamayi kendisi coordinatlarin yakinligina gore otomatik yapiyor ve ona gore de size:2, size:1, size:3 geliyor..
-    let style = styleCache[size];
-    var dynamic_text = size > 1 ? size.toString() : "Hytta";
-    var color = size > 100 ? "255, 0, 0 " : size > 50 ? "243, 156, 18 " : size > 20 ? "240, 2, 153 " : size > 15 ? "220, 2, 240 " : size > 10 ? "0, 150, 0" : size == 1 ? "2, 240, 228 " : size > 0.99 ? "42, 240, 2 " : "192, 192, 192";
-    var dynamic_text_color = size > 10 ? "#fff" : "#000";
-
-    if(size == 1){
-        
-    var selectedFeature = feature.get('features')[0];
-    console.log(selectedFeature.get("name") );
-    //Burda biz style a text i uygulayamayiz cunku burda dinamik bir sekilde surekli style i degistiriyor ama size i n kac oldugunu gorebiliyoruz..yani kac tane ayri point e veya parcaya boldu ise onu gorebiliriz.. onun sayisini gorebiliiriz.. 
-  
-    //Boyle yaptigimz zaman hangisi ilk once 1 olursa onun textini diger tum noktalara da basmis oluruz eger ki size i 1 olunca ayarladimgiz dinamik text i genel style da kullanirsak
-    dynamic_text_color = selectedFeature.get("name") ? selectedFeature.get("name") :  dynamic_text;  
-    style = new Style({
-      image: new CircleStyle({
-        radius: 12,
-        stroke: new Stroke({
-          color: '#fff',
-        }),
-        fill: new Fill({
-          color: '#3399CC',
-          color:"rgba("+color+",05)"
-        }),
-      }),
-      text: new Text({
-        text: selectedFeature.get("name"),
-        scale:1,
-        fill: new Fill({
-           color: dynamic_text_color,
-          
-        }),
-      }),
-      zIndex:100,
-    });
-    }else if(size<=6){
-      {
-        if (!style) {
-          style = new Style({
-            image: new CircleStyle({
-              //radius noktanin icinde numara olan noktalarin daire seklinde genislemesini sagliyor
-              radius: 15,
-              stroke: new Stroke({
-                color: '#fff',
-              }),
-              fill: new Fill({
-                color: '#3399CC',
-                color:"rgba("+color+",05)"
-              }),
-            }),
-            text: new Text({
-              text: size.toString(),
-              scale:1.2,
-              fill: new Fill({
-                 color: dynamic_text_color,
-                
-              }),
-            }),
-            zIndex:100,
-          });
-          styleCache[size] = style;
-        }
-      }
-
-    }else if(size<=11){
-      {
-        if (!style) {
-          style = new Style({
-            image: new CircleStyle({
-              //radius noktanin icinde numara olan noktalarin daire seklinde genislemesini sagliyor
-              radius: 18,
-              stroke: new Stroke({
-                color: '#fff',
-              }),
-              fill: new Fill({
-                color: '#3399CC',
-                color:"rgba("+color+",05)"
-              }),
-            }),
-            text: new Text({
-              text: size.toString(),
-              scale:1.5,
-              fill: new Fill({
-                 color: dynamic_text_color,
-                
-              }),
-            }),
-            zIndex:100,
-          });
-          styleCache[size] = style;
-        }
-      }
-
-    }else{
-      if (!style) {
-        style = new Style({
-          image: new CircleStyle({
-            //radius noktanin icinde numara olan noktalarin daire seklinde genislemesini sagliyor
-            radius: 18,
-            stroke: new Stroke({
-              color: '#fff',
-            }),
-            fill: new Fill({
-              color: '#3399CC',
-              color:"rgba("+color+",0.9)"
-            }),
-          }),
-          text: new Text({
-            text: size.toString(),
-            scale:2,
-            fill: new Fill({
-               color: dynamic_text_color,
-              
-            }),
-          }),
-          zIndex:100,
-        });
-        styleCache[size] = style;
-      }
-    }
-
-    return style;
-  },
+  //source: clusterSource,
+//  style: clusterStyleFunction,
 });
+
+
+function clusterStyleFunction (feature) {
+  // console.log("feature.get('features'): ",feature.get('features'));
+   //Her bir feature icerisinde o feature ye ait features isminde key var ve onun value si de onun alt feature leridir yani dizi icerisindeki feature lerdir... 
+   
+   const size = feature.get('features').length;//Kac tane ise o numarayi gosteriyoruz bakinca kullanici sunu bilecek bu point marker kac numara gosteriyorsa yaklasinca o adette alt datalarini gorecek
+  let originalFeature = feature.get("features")[0];
+          let name = originalFeature.getKeys();
+     // console.log("keys: ",name);
+     // console.log("city: ",originalFeature.get("city"));
+     // console.log("name: ",originalFeature.get("name"));
+   //BESTPRACTISE....
+   //Burda eger ki size:1 ise o zaman sen bu pointin artik detay bilgilerini gosteren style i uygula diyebiliriz... 
+ //  console.log("size: ",size);
+   //Burda gruplayamayi kendisi coordinatlarin yakinligina gore otomatik yapiyor ve ona gore de size:2, size:1, size:3 geliyor..
+   let style = styleCache[size];
+   var dynamic_text = size > 1 ? size.toString() : "Hytta";
+   var color = size > 100 ? "255, 0, 0 " : size > 50 ? "243, 156, 18 " : size > 20 ? "240, 2, 153 " : size > 15 ? "220, 2, 240 " : size > 10 ? "0, 150, 0" : size == 1 ? "2, 240, 228 " : size > 0.99 ? "42, 240, 2 " : "192, 192, 192";
+   var dynamic_text_color = size > 10 ? "#fff" : "#000";
+
+   if(size == 1){
+       
+   var selectedFeature = feature.get('features')[0];
+  // console.log(selectedFeature.get("name") );
+   //Burda biz style a text i uygulayamayiz cunku burda dinamik bir sekilde surekli style i degistiriyor ama size i n kac oldugunu gorebiliyoruz..yani kac tane ayri point e veya parcaya boldu ise onu gorebiliriz.. onun sayisini gorebiliiriz.. 
+ 
+   //Boyle yaptigimz zaman hangisi ilk once 1 olursa onun textini diger tum noktalara da basmis oluruz eger ki size i 1 olunca ayarladimgiz dinamik text i genel style da kullanirsak
+   dynamic_text_color = selectedFeature.get("name") ? selectedFeature.get("name") :  dynamic_text;  
+   style = new Style({
+     image: new CircleStyle({
+       radius: 12,
+       stroke: new Stroke({
+         color: '#fff',
+       }),
+       fill: new Fill({
+         color: '#3399CC',
+         color:"rgba("+color+",05)"
+       }),
+     }),
+     text: new Text({
+       text: selectedFeature.get("name"),
+       scale:1,
+       fill: new Fill({
+          color: dynamic_text_color,
+         
+       }),
+     }),
+     zIndex:100,
+   });
+   }else if(size<=6){
+     {
+       if (!style) {
+         style = new Style({
+           image: new CircleStyle({
+             //radius noktanin icinde numara olan noktalarin daire seklinde genislemesini sagliyor
+             radius: 15,
+             stroke: new Stroke({
+               color: '#fff',
+             }),
+             fill: new Fill({
+               color: '#3399CC',
+               color:"rgba("+color+",05)"
+             }),
+           }),
+           text: new Text({
+             text: size.toString(),
+             scale:1.2,
+             fill: new Fill({
+                color: dynamic_text_color,
+               
+             }),
+           }),
+           zIndex:100,
+         });
+         styleCache[size] = style;
+       }
+     }
+
+   }else if(size<=11){
+     {
+       if (!style) {
+         style = new Style({
+           image: new CircleStyle({
+             //radius noktanin icinde numara olan noktalarin daire seklinde genislemesini sagliyor
+             radius: 18,
+             stroke: new Stroke({
+               color: '#fff',
+             }),
+             fill: new Fill({
+               color: '#3399CC',
+               color:"rgba("+color+",05)"
+             }),
+           }),
+           text: new Text({
+             text: size.toString(),
+             scale:1.5,
+             fill: new Fill({
+                color: dynamic_text_color,
+               
+             }),
+           }),
+           zIndex:100,
+         });
+         styleCache[size] = style;
+       }
+     }
+
+   }else{
+     if (!style) {
+       style = new Style({
+         image: new CircleStyle({
+           //radius noktanin icinde numara olan noktalarin daire seklinde genislemesini sagliyor
+           radius: 18,
+           stroke: new Stroke({
+             color: '#fff',
+           }),
+           fill: new Fill({
+             color: '#3399CC',
+             color:"rgba("+color+",0.9)"
+           }),
+         }),
+         text: new Text({
+           text: size.toString(),
+           scale:2,
+           fill: new Fill({
+              color: dynamic_text_color,
+             
+           }),
+         }),
+         zIndex:100,
+       });
+       styleCache[size] = style;
+     }
+   }
+
+   return style;
+ }
+
+
 
 const raster = new TileLayer2({
   source: new OSM(),
@@ -363,9 +373,18 @@ const map = new Map({
   }),
 });
 
+clusters.setSource(clusterSource);
+clusterSource.set("name","myclusterSource");
+console.log("CLUSTERS-SOURCE-NAME: ",clusterSource.get("name"))
 //BESTPRACTISE...ILK EKLENEN EN ALTTA SON EKLENEN USTTE KALACAKTIR STYLE OLARAK BU COK ONEMLIDIR... 
+clusters.setStyle(clusterStyleFunction);
 map.addLayer(vectorlayer2);
 map.addLayer(clusters);
+
+
+
+
+console.log("clusters-LAYER-FEEATURES_LENGTH: ",clusters.getSource().getSource().getFeatures().length);
 
 map.on("click",function(event){
   console.log(event.coordinate);
@@ -434,7 +453,7 @@ for (var i = 0; i < clusterFeatures.length; i++) {
 
 
 source.getFeatures().forEach(feature=>{
-  console.log(feature.get("name"));
+ // console.log(feature.get("name"));
   let text = feature.get("name");
   if(feature.get("name")){
     let newStyle =  new Style({
