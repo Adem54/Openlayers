@@ -67,6 +67,7 @@ const planAreaWMS = new TileLayer({
   source:new TileWMS({
     url:"https://openwms.statkart.no/skwms1/wms.planomraade?",
     crossOrigin: 'anonymous',
+  
     	params: {
 					LAYERS: 'PLANOMRADE_WMS',    
           FORMAT:'image/png',
