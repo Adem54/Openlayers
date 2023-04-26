@@ -8,6 +8,8 @@ import LayerGroup from 'ol/layer/Group.js';
 import WMTS, {optionsFromCapabilities} from 'ol/source/WMTS.js';
 import WMTSCapabilities from 'ol/format/WMTSCapabilities.js';
 
+
+https://kartkatalog.geonorge.no/metadata/terreng-norgeskart-wms/b85de734-b9b4-4719-ad80-fe55ee7415d2
 const parser = new WMTSCapabilities();
 let  terrengNorweiganMapWMTS ;
 
@@ -29,6 +31,7 @@ fetch('data/WMTSCapabilities.xml')
   title:"terrengNorweiganMapWMTS"
 })
 /*
+https://kartkatalog.geonorge.no/metadata/terreng-norgeskart-wms/b85de734-b9b4-4719-ad80-fe55ee7415d2
 WMTS de ise bize verilen siteye girdgimz zaman orda bize WMTS source  icin bir url verilecek ona tikladgimz zaman o bize 1 tane WMTSCapabilities.xml dosyasi download eder o dosyayi aliriz ve o dosyayi openlayers projmeiz icerisinde data isminde klasor altina yerlestiririz ve o dosyaya fetch ile request gondeririz ve ordan gelen responsu alarak options larimizi elde ederiz ve bu options lari alip WMTS source icerisinde kullanriz....
 */
 
@@ -59,7 +62,7 @@ const map = new Map({
 //   title:"OSM"
 // });
 
-
+//https://kartkatalog.geonorge.no/metadata/planomraade-wms/d70cedfc-fdb2-45cc-a9c6-0b7f09a1e746
 const planAreaWMS = new TileLayer({
   source:new TileWMS({
     url:"https://openwms.statkart.no/skwms1/wms.planomraade?",
@@ -87,6 +90,7 @@ http://www.opengis.net/sld http://schemas.opengis.net/sld/1.1.0/sld_capabilities
 bu kisim cok onemlidir... buradan da  wms e ait version... sld http://schemas.opengis.net/sld/1.1.0/
 ve LAYERS ISMI https://openwms.statkart.no:80/cgi-bin/sentinel2?service=WMS
 
+Resources keywordu uzerinden de aryaabiliriz bazi xml kaynaklarda resources keywordu  uzerinden aradigmiz bilgileri bulabiliyoruz
 
 <WMS_Capabilities xmlns="http://www.opengis.net/wms" xmlns:sld="http://www.opengis.net/sld" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ms="http://mapserver.gis.umn.edu/mapserver" version="1.3.0" xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd http://www.opengis.net/sld http://schemas.opengis.net/sld/1.1.0/sld_capabilities.xsd http://mapserver.gis.umn.edu/mapserver https://openwms.statkart.no:80/cgi-bin/sentinel2?service=WMS&version=1.3.0&request=GetSchemaExtension">
 
@@ -113,6 +117,8 @@ asagidaki etiklere bakilmalidir
 
  -->
 */
+
+//https://kartkatalog.geonorge.no/metadata/satellittdata-sentinel-2-skyfri-mosaikk-wms/38a52b73-2ffb-47cc-9ecd-147ee18f62be
 const skyfriMosaikkWMS = new TileLayer({
   source:new TileWMS({
     url:"https://openwms.statkart.no/skwms1/wms.sentinel2?",
@@ -130,7 +136,7 @@ const skyfriMosaikkWMS = new TileLayer({
 
 //map.addLayer(skyfriMosaikkWMS);
 
-
+//https://kartkatalog.geonorge.no/metadata/traktorveg-og-skogsbilveg-wms/e45aea66-5d98-4703-8026-692c782eb5b0
 const tractorRoadAndForestVehicleRoadWMS = new TileLayer({
   source:new TileWMS({
     url:"https://openwms.statkart.no/skwms1/wms.traktorveg_skogsbilveger?",
