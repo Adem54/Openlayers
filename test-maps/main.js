@@ -148,8 +148,6 @@ const tractorRoadAndForestVehicleRoadWMS = new TileLayer({
 
 //map.addLayer(tractorRoadAndForestVehicleRoadWMS);
 
-
-
 const norweiganMap = new TileLayer({
   source:new TileWMS({
     url:"https://opencache.statkart.no/gatekeeper/gk/gk.open?",
@@ -185,8 +183,6 @@ map.addLayer(baseLayerGroup);
 
 
 const baseLayerElements=document.querySelectorAll(".sidebar > input[type=radio]")
-
-
 
 
 for (let baseLayerElement of baseLayerElements) {
